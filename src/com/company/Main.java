@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
+
 class Results {
     private String FullName;
     private int Age;
@@ -76,6 +77,7 @@ public class Main {
         else if (age > 61 && age < 70){
             time = rnd(3000, 6400);
         }
+
         else if (age > 71 && age < 80){
             time = rnd(4000, 7000);
         }
