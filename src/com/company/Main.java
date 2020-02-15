@@ -5,11 +5,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.text.*;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-
 
 class Results {
     private String FullName;
@@ -37,6 +32,8 @@ public class Main {
     public static ArrayList<Results> ResultList(int numberOfRunners){
         ArrayList<String> listFile = new ArrayList<String>();
         ArrayList<Results> listResult = new ArrayList<Results>();
+        listFile.removeAll(listFile);
+        listResult.removeAll(listResult);
         int age; int finish; String fullName;
         try{
             FileInputStream fstream = new FileInputStream("/home/anon/IdeaProjects/test/src/com/company/names.txt");
@@ -77,7 +74,6 @@ public class Main {
         else if (age > 61 && age < 70){
             time = rnd(3000, 6400);
         }
-
         else if (age > 71 && age < 80){
             time = rnd(4000, 7000);
         }
@@ -90,13 +86,20 @@ public class Main {
         return (int) (Math.random() * ++max) + min;
     }
 
+    public static String getTime(int s){
+        int hours = s / 3600;
+        int minutes = (s % 3600) / 60;
+        int seconds = s % 60;
+        return  hours + ":" + minutes + ":" + seconds;
+    }
+
     public static void ShowResult(ArrayList<Results> listResult){
-        System.out.println("Имя спортсмена\t" + "Возраст\t"  + "Результат\t");
-        for(int i = 0; i < listResult.size(); ++i){
-            String fullName = listResult.get(i).getFullName();
-            int age = listResult.get(i).getAge();
-            String finish =  new SimpleDateFormat("HH:mm:ss").format(new Date(TimeUnit.SECONDS.toMillis(listResult.get(i).getTimeOfFinish())));
-            System.out.println(fullName + "\t\t" + age + "\t" + finish);
+        System.out.printf("%-25s%-11s%-25s%n","Имя спортсмена","Возраст","Результат");
+        for (Results results : listResult) {
+            String fullName = results.getFullName();
+            int age = results.getAge();
+            int finish = results.getTimeOfFinish();
+            System.out.printf("%-25s%-11d%-25s%n", fullName, age, getTime(finish));
         }
     }
 
