@@ -1,56 +1,43 @@
 package com.company;
 
+import java.io.*;
 import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
 
-class Results {
-    private String FullName;
-    private int Age;
-    private int TimeOfFinish;
-
-    public Results(String FullName, int Age, int TimeOfFinish){
-        this.FullName = FullName;
-        this.Age = Age;
-        this.TimeOfFinish = TimeOfFinish;
-    }
-    public String getFullName() {
-        return  FullName;
-    }
-    public int getAge() {
-        return  Age;
-    }
-    public int getTimeOfFinish() {
-        return  TimeOfFinish;
-    }
-}
+import static com.company.Results.COMPARE_BY_RESULT;
 
 public class Main {
 
-    public static ArrayList<Results> ResultList(int numberOfRunners){
+    public static ArrayList<String> FileList() {
         ArrayList<String> listFile = new ArrayList<String>();
-        ArrayList<Results> listResult = new ArrayList<Results>();
-        listFile.removeAll(listFile);
-        listResult.removeAll(listResult);
-        int age; int finish; String fullName;
-        try{
+        try {
             FileInputStream fstream = new FileInputStream("/home/anon/IdeaProjects/test/src/com/company/names.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             String strLine;
-            while ((strLine = br.readLine()) != null){
+            while ((strLine = br.readLine()) != null) {
                 listFile.add(strLine);
             }
-        }catch (IOException e) {
+            br.close();
+        } catch (IOException e) {
             System.out.println("Ошибка");
         }
-        for (int i = 0; i < numberOfRunners; ++i)
-        {
-            age = rnd(18, 80);
-            fullName = FullName(listFile);
-            finish = FindTimeOfFinish(age);
-            listResult.add(new Results(fullName, age, finish));
+        return listFile;
+    }
+
+    public static ArrayList<Results> ResultList(ArrayList<String> listFile, int numberOfRunners) {
+        ArrayList<Results> listResult = new ArrayList<Results>();
+        int age; int finish; String fullName;
+        try{
+            for (int i = 0; i < numberOfRunners; ++i)
+            {
+                age = rnd(18, 80);
+                fullName = FullName(listFile);
+                finish = FindTimeOfFinish(age);
+                if(finish <= 0)
+                    throw new IndefiniteTimeOfFinishExeption();
+                listResult.add(new Results(fullName, age, finish));
+            }
+        }catch (IndefiniteTimeOfFinishExeption e) {
+            System.out.println("Некоректно сгенерирован результат");
         }
         return listResult;
     }
@@ -61,24 +48,20 @@ public class Main {
         return fullName;
     }
     public static int FindTimeOfFinish(int age){
-        int time = 0;
-        if (age > 18 && age < 35){
+        int time;
+        if (age >= 18 && age <= 35)
             time = rnd(1680, 5400);
-        }
-        else if (age > 36 && age < 50){
+        else if (age > 35 && age <= 50)
             time = rnd(2000, 5400);
-        }
-        else if (age > 51 && age < 60){
+        else if (age > 50 && age <= 60)
             time = rnd(2500, 5400);
-        }
-        else if (age > 61 && age < 70){
+        else if (age > 60 && age <= 70)
             time = rnd(3000, 6400);
-        }
-        else if (age > 71 && age < 80){
+        else if (age > 70 && age <= 80)
             time = rnd(4000, 7000);
-        }
+        else
+            time = 0;
         return time;
-
     }
 
     public static int rnd(int min, int max) {
@@ -94,6 +77,7 @@ public class Main {
     }
 
     public static void ShowResult(ArrayList<Results> listResult){
+        listResult.sort(COMPARE_BY_RESULT);
         System.out.printf("%-25s%-11s%-25s%n","Имя спортсмена","Возраст","Результат");
         for (Results results : listResult) {
             String fullName = results.getFullName();
@@ -104,8 +88,13 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int numberOfRunners = rnd(10, 50);
-        ArrayList<Results> listResult = ResultList(numberOfRunners);
-	    ShowResult(listResult);
+            int numberOfRunners = rnd(50, 100);
+            ArrayList<String> listFile = FileList();
+            ArrayList<Results> listResult = ResultList(listFile, numberOfRunners);
+            ShowResult(listResult);
+            int countFile = listFile.size();
+            int count = listResult.size();
+            System.out.println("Кол-во строк в результатах " + count);
+            System.out.println("Кол-во спортсменов " + numberOfRunners + ", кол-во строк в списке файла " + countFile);
     }
 }
