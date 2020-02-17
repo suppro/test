@@ -1,9 +1,8 @@
 package com.company;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
-class Results implements Serializable {
+class Results {
     private String FullName;
     private int Age;
     private int TimeOfFinish;
@@ -13,6 +12,7 @@ class Results implements Serializable {
         this.Age = Age;
         this.TimeOfFinish = TimeOfFinish;
     }
+
     public String getFullName() {
         return  FullName;
     }
@@ -23,10 +23,5 @@ class Results implements Serializable {
         return  TimeOfFinish;
     }
 
-    public static final Comparator<Results> COMPARE_BY_RESULT = new Comparator<Results>() {
-        @Override
-        public int compare(Results lhs, Results rhs) {
-            return lhs.getTimeOfFinish() - rhs.getTimeOfFinish();
-        }
-    };
+    public static final Comparator<Results> COMPARE_BY_RESULT = Comparator.comparingInt(Results::getTimeOfFinish);
 }
